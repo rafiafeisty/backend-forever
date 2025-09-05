@@ -32,6 +32,14 @@ connectDB();
 app.get("/", (req, res) => {
   res.send("Backend is running");
 });
+app.get("/orders", async (req, res) => {
+  try {
+    const orders = await Order.find().populate("items.item_id"); // populate item details
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
 
 app.use("/auth", authRoutes);
 
