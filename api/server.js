@@ -10,15 +10,24 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads")); 
 
-// Connect DB
-mongoose.connect(process.env.MONGO_URI, { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true 
-})
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err));
+// Connect DB (guard against multiple connections in serverless)
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+  }
+}
+connectDB();
 
 app.get("/", (req, res) => {
   res.send("Backend is running");
@@ -26,6 +35,6 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 
-
+// Export only handler for Vercel
 module.exports = app;
 module.exports.handler = serverless(app);
