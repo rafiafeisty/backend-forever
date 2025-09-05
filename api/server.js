@@ -1,13 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const multer = require("multer");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const authRoutes = require("../routes/auth");
 const serverless = require("serverless-http");
 require("dotenv").config();
-
-const { Item, Order, Login } = require("../models/User");
+const {Order}=require("../models/User")
 
 const app = express();
 
@@ -15,12 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Multer (for images)
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
 // Connect DB (guard against multiple connections in serverless)
 let isConnected = false;
+
 async function connectDB() {
   if (isConnected) return;
   try {
@@ -35,6 +29,11 @@ async function connectDB() {
   }
 }
 connectDB();
+
+app.get("/", (req, res) => {
+  res.send("Backend is running");
+});
+
 
 // ------------------- Health Check -------------------
 app.get("/", (req, res) => {
@@ -228,5 +227,8 @@ app.post("/adminlog", async (req, res) => {
   }
 });
 
-// ------------------- Export -------------------
-module.exports = serverless(app);
+app.use("/auth", authRoutes);
+
+// Export only handler for Vercel
+module.exports = app;
+module.exports.handler = serverless(app);
