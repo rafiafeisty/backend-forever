@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const authRoutes = require("../routes/auth");
+const authRoutes = require("./routes/auth");
 const serverless = require("serverless-http");
 require("dotenv").config();
 const {Order}=require("../models/User")
