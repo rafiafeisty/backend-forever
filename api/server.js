@@ -10,7 +10,12 @@ const {Item}=require("../models/User")
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://careercraft-frontend-zeta.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 // Connect DB (guard against multiple connections in serverless)
