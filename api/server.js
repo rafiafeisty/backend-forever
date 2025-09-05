@@ -4,14 +4,13 @@ const cors = require("cors");
 const authRoutes = require("../routes/auth");
 const serverless = require("serverless-http");
 require("dotenv").config();
-const {Order}=require("../models/User")
-const {Item}=require("../models/User")
+
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://backend-forever-zeta.vercel.app',
+  origin: 'https://forever-frontend-three-fawn.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
